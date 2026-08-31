@@ -64,6 +64,18 @@ test('relay schedule route rejects an unknown relay before hardware access', asy
   assert.equal(body.error.code, 'INVALID_RELAY');
 });
 
+test('device clock route validates input before hardware access', async () => {
+  const response = await fetch(`${baseUrl}/api/device-clock`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ dateTime: '2026-02-30T12:00:00' }),
+  });
+  const body = await response.json();
+
+  assert.equal(response.status, 400);
+  assert.equal(body.error.code, 'INVALID_DEVICE_DATE_TIME');
+});
+
 test('unknown route returns the standard error shape', async () => {
   const response = await fetch(`${baseUrl}/api/unknown`);
   const body = await response.json();

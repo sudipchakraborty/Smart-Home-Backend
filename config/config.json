@@ -26,5 +26,10 @@
       "relay1": { "startTime": 1, "endTime": 3 },
       "relay2": { "startTime": 5, "endTime": 7 }
     }
+  },
+  "deviceClock": {
+    "startRegister": 9,
+    "registerCount": 6,
+    "writeDelayMs": 50
   }
 }

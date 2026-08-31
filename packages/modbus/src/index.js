@@ -1,6 +1,11 @@
 export { ModbusRtuClient } from './modbus-rtu-client.js';
 export { writeRegisterBlock } from './register-writer.js';
 export {
+  deviceDateTimeWriteSequence,
+  parseDeviceDateTime,
+  registersToDeviceDateTime,
+} from './device-clock-codec.js';
+export {
   registersToTime,
   registersToUint32,
   secondsToTime,
