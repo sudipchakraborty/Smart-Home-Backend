@@ -1,0 +1,30 @@
+{
+  "serialPort": {
+    "path": "COM15",
+    "baudRate": 115200,
+    "dataBits": 8,
+    "stopBits": 1,
+    "parity": "none",
+    "rtscts": false,
+    "xon": false,
+    "xoff": false,
+    "xany": false,
+    "dtr": false,
+    "rts": false,
+    "autoOpen": false
+  },
+  "modbus": {
+    "protocol": "ascii",
+    "unitId": 1,
+    "timeoutMs": 2000
+  },
+  "relaySchedule": {
+    "wordOrder": "low-high",
+    "writeMode": "single-register",
+    "writeDelayMs": 50,
+    "registers": {
+      "relay1": { "startTime": 1, "endTime": 3 },
+      "relay2": { "startTime": 5, "endTime": 7 }
+    }
+  }
+}
