@@ -1,6 +1,6 @@
 {
   "serialPort": {
-    "path": "COM15",
+    "path": "COM9",
     "baudRate": 115200,
     "dataBits": 8,
     "stopBits": 1,

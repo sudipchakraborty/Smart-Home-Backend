@@ -56,7 +56,7 @@ test('GET /api/modbus/status reports configured port without opening it', async 
   assert.equal(response.status, 200);
   assert.equal(body.success, true);
   assert.equal(body.data.connected, false);
-  assert.equal(body.data.path, 'COM15');
+  assert.equal(body.data.path, 'COM9');
   assert.equal(body.data.unitId, 1);
 });
 

@@ -70,3 +70,8 @@
 
 - Added `DELETE /api/devices/scan` to request scan cancellation.
 - Backend checks the stop flag between slave-ID probes and returns already-found devices.
+
+## 2026-09-24 - Changed backend Modbus port to COM9
+
+- Updated `config/config.json` serial port from `COM15` to `COM9` for the backend Modbus connection.
+- Edge firmware was not changed.

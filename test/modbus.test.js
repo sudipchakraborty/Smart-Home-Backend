@@ -6,8 +6,8 @@ import { normalizeSerialSettings } from '@smart-home/serial-port';
 
 import { appConfig } from '../src/config/app-config.js';
 
-test('loads COM15 and Modbus settings from config.json', () => {
-  assert.equal(appConfig.serialPort.path, 'COM15');
+test('loads COM9 and Modbus settings from config.json', () => {
+  assert.equal(appConfig.serialPort.path, 'COM9');
   assert.equal(appConfig.serialPort.baudRate, 115200);
   assert.equal(appConfig.modbus.unitId, 1);
 });
@@ -26,7 +26,7 @@ test('Modbus client exposes status without opening hardware', () => {
 
   assert.deepEqual(client.status, {
     connected: false,
-    path: 'COM15',
+    path: 'COM9',
     baudRate: 115200,
     protocol: 'ascii',
     unitId: 1,
@@ -37,5 +37,5 @@ test('Modbus client exposes status without opening hardware', () => {
 test('Modbus operations fail clearly while disconnected', async () => {
   const client = new ModbusRtuClient(appConfig);
 
-  await assert.rejects(client.readHoldingRegisters(0, 1), /COM15 is not connected/);
+  await assert.rejects(client.readHoldingRegisters(0, 1), /COM9 is not connected/);
 });
