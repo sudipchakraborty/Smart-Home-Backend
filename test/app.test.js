@@ -29,6 +29,11 @@ test('GET /api/health returns service health', async () => {
   assert.equal(body.data.status, 'healthy');
 });
 
+test('allows the frontend origin when opened through 127.0.0.1', async () => {
+  const response = await fetch(`${baseUrl}/api/health`, { headers: { Origin: 'http://127.0.0.1:5173' } });
+  assert.equal(response.headers.get('access-control-allow-origin'), 'http://127.0.0.1:5173');
+});
+
 test('GET / identifies the API and links to its health endpoint', async () => {
   const response = await fetch(baseUrl);
   const body = await response.json();

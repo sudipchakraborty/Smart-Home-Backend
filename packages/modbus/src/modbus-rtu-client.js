@@ -5,6 +5,7 @@ import { normalizeSerialSettings } from '@smart-home/serial-port';
 
 export class ModbusRtuClient extends EventEmitter {
   #client;
+  #currentUnitId;
 
   constructor({ serialPort, modbus = {} }) {
     super();
@@ -14,6 +15,7 @@ export class ModbusRtuClient extends EventEmitter {
       unitId: modbus.unitId ?? 1,
       timeoutMs: modbus.timeoutMs ?? 1000,
     });
+    this.#currentUnitId = this.settings.unitId;
 
     if (!Number.isInteger(this.settings.unitId) || this.settings.unitId < 1 || this.settings.unitId > 247) {
       throw new TypeError('modbus.unitId must be an integer from 1 to 247');
@@ -68,6 +70,7 @@ export class ModbusRtuClient extends EventEmitter {
         );
       });
       this.#client = client;
+      this.#currentUnitId = this.settings.unitId;
       this.emit('connected', this.status);
       return this.status;
     } catch (error) {
@@ -97,6 +100,20 @@ export class ModbusRtuClient extends EventEmitter {
     return this.#execute('readHoldingRegisters', address, length);
   }
 
+  readHoldingRegistersAtUnit(unitId, address, length, timeoutMs = this.settings.timeoutMs) {
+    if (!Number.isInteger(unitId) || unitId < 0 || unitId > 255) throw new RangeError('unitId must be from 0 to 255');
+    if (!this.isOpen) throw new Error(`Modbus port ${this.serialSettings.path} is not connected`);
+    const previousUnitId = this.#currentUnitId;
+    const previousTimeout = this.settings.timeoutMs;
+    this.#client.setID(unitId);
+    this.#client.setTimeout(timeoutMs);
+    return this.#client.readHoldingRegisters(address, length).finally(() => {
+      this.#client.setID(previousUnitId);
+      this.#client.setTimeout(previousTimeout);
+      this.#currentUnitId = previousUnitId;
+    });
+  }
+
   readInputRegisters(address, length) {
     return this.#execute('readInputRegisters', address, length);
   }
@@ -107,6 +124,14 @@ export class ModbusRtuClient extends EventEmitter {
 
   writeRegister(address, value) {
     return this.#execute('writeRegister', address, value);
+  }
+
+  writeRegisterAtUnit(unitId, address, value) {
+    if (!Number.isInteger(unitId) || unitId < 0 || unitId > 255) throw new RangeError('unitId must be from 0 to 255');
+    if (!this.isOpen) throw new Error(`Modbus port ${this.serialSettings.path} is not connected`);
+    const previousUnitId = this.#currentUnitId;
+    this.#client.setID(unitId);
+    return this.#client.writeRegister(address, value).finally(() => { this.#client.setID(previousUnitId); this.#currentUnitId = previousUnitId; });
   }
 
   writeCoils(address, values) {

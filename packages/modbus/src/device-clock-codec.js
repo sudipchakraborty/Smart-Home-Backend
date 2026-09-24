@@ -22,15 +22,16 @@ export const registersToDeviceDateTime = (registers) => {
   if (!Array.isArray(registers) || registers.length < 6) {
     throw new TypeError('Six RTC registers are required');
   }
-  const [hour, minute, second, day, month, shortYear] = registers.map(Number);
-  const fields = parseDeviceDateTime(`${2000 + shortYear}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:${pad(second)}`);
+  const [hour, minute, second, day, month, yearValue] = registers.map(Number);
+  const year = yearValue >= 100 ? yearValue : 2000 + yearValue;
+  const fields = parseDeviceDateTime(`${year}-${pad(month)}-${pad(day)}T${pad(hour)}:${pad(minute)}:${pad(second)}`);
   return { dateTime: `${fields.year}-${pad(fields.month)}-${pad(fields.day)}T${pad(fields.hour)}:${pad(fields.minute)}:${pad(fields.second)}`, ...fields };
 };
 
-export const deviceDateTimeWriteSequence = (value, startAddress = 9) => {
+export const deviceDateTimeWriteSequence = (value, startAddress = 15, updateAddress = 21) => {
   const fields = parseDeviceDateTime(value);
   return [
-    { address: startAddress + 3, value: 1 },
+    { address: updateAddress, value: 1 },
     { address: startAddress + 4, value: fields.month },
     { address: startAddress + 5, value: fields.year - 2000 },
     { address: startAddress + 3, value: fields.day },

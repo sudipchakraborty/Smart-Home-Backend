@@ -17,14 +17,14 @@ const withConnection = async (operation) => {
 };
 
 const readConnected = async () => {
-  const response = await modbusClient.readHoldingRegisters(clockConfig.startRegister, clockConfig.registerCount);
+  const response = await modbusClient.readHoldingRegisters(clockConfig.readStartRegister, clockConfig.registerCount);
   return registersToDeviceDateTime(response.data);
 };
 
 export const getDeviceClock = () => withConnection(readConnected);
 
 export const setDeviceClock = (dateTime) => {
-  const writes = deviceDateTimeWriteSequence(dateTime, clockConfig.startRegister);
+  const writes = deviceDateTimeWriteSequence(dateTime, clockConfig.writeStartRegister, clockConfig.updateRegister);
   return withConnection(async () => {
     for (const [index, write] of writes.entries()) {
       await modbusClient.writeRegister(write.address, write.value);
