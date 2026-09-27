@@ -75,3 +75,28 @@
 
 - Updated `config/config.json` serial port from `COM15` to `COM9` for the backend Modbus connection.
 - Edge firmware was not changed.
+
+## 2026-09-27 - Planned Edge reset command and relay status integration
+
+- Add backend support for the Edge reset command in registers `91..95` using the ASCII sequence `RESET` and Modbus function `06`.
+- Add backend read support for relay status registers `96..97`, decoding `O` as active and `F` as inactive.
+- Expose reset and relay status through frontend controls and status indicators.
+- Verify with backend tests, frontend lint/build, and PlatformIO build where the local environment permits; hardware readback remains separate.
+
+## 2026-09-27 - Edge reset command and relay status integration implemented
+
+- Added `POST /api/device-control/reset`, writing ASCII `RESET` to registers `91..95` one register at a time.
+- Added `GET /api/device-control/relay-status`, reading registers `96..97` and decoding `O`/`F` to boolean relay state.
+- Added service tests for the command sequence and status decoding.
+- Validation: backend check PASS; backend tests PASS (`25/25` serial run); Edge V1 PlatformIO build PASS. Physical reset/status readback remains pending.
+
+## 2026-09-27 - Shared V1/V2 Modbus map confirmed from supplied register deck
+
+- Confirmed backend schedule map matches the supplied deck: V1-compatible HH/MM/SS relay registers `1..14` and RTC registers `15..27`.
+- V2 firmware alignment is being completed in the Edge repository; backend register configuration remains unchanged.
+
+## 2026-09-28 - Fixed frontend relay schedule update failure
+
+- Root cause: backend `writeTime()` called an undefined `wait()` helper after the first register write.
+- Result: frontend schedule updates returned `RELAY_COMMUNICATION_FAILED` and stopped before writing all HH/MM/SS registers or trigger register `7/14`.
+- Added the missing delay helper; Edge project was not changed.

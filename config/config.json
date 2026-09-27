@@ -44,6 +44,10 @@
       "ledStatus": 32
     }
   },
+  "deviceControl": {
+    "resetRegister": 91,
+    "relayStatusRegister": 96
+  },
   "deviceIdentity": {
     "scanTimeoutMs": 1000,
     "writeDelayMs": 50,

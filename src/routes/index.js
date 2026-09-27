@@ -6,6 +6,7 @@ import { modbusRouter } from '../modules/modbus/modbus.routes.js';
 import { relayScheduleRouter } from '../modules/relay-schedule/relay-schedule.routes.js';
 import { outputAccessRouter } from '../modules/output-access/output-access.routes.js';
 import { deviceScanRouter } from '../modules/device-scan/device-scan.routes.js';
+import { deviceControlRouter } from '../modules/device-control/device-control.routes.js';
 
 export const apiRouter = Router();
 
@@ -16,3 +17,4 @@ apiRouter.use('/relays', relayScheduleRouter);
 apiRouter.use('/output-access', outputAccessRouter);
 apiRouter.use('/devices/scan', deviceScanRouter);
 apiRouter.use('/devices', deviceScanRouter);
+apiRouter.use('/device-control', deviceControlRouter);
