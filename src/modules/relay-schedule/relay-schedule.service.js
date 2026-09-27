@@ -26,6 +26,7 @@ const parseTime = (time) => {
   if (hours > 23 || minutes > 59 || seconds > 59) throw new RangeError('Time must be between 00:00:00 and 23:59:59');
   return [hours, minutes, seconds];
 };
+const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 const writeTime = async (addresses, time) => {
   const values = parseTime(time);
   for (let index = 0; index < addresses.length; index += 1) {
