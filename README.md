@@ -181,3 +181,11 @@ Copy `.env.example` to `.env`. Never commit `.env` or credentials.
 - [ ] Homes, rooms, devices, and automation rules
 - [ ] Database and migrations
 - [ ] Real-time device events
+
+## Saved devices and selected-device controls
+
+Configuration scans automatically merge discovered devices into `data/devices.json` (runtime data, ignored by Git). Empty or stopped scans preserve previously saved devices. Restarting the backend preserves the inventory; saved entries are not a live online-status check. The Control dropdown loads this list through `GET /api/devices/saved`, without rescanning the serial line.
+
+Control requests include `?unitId=1..247` on the existing relay schedule, device-clock, output-access, and device-control endpoints. The address is request-local and complete serial operations are queued so concurrent requests cannot change another request's target. Calls without `unitId` retain the configured default address for existing clients.
+
+Verified identity edits refresh the JSON inventory. On register-backed Edge firmware, ID digit writes follow each resulting address and avoid known saved addresses. Device ID uses 1..3 digits (1..247); Device Name uses 1..18 characters. Existing Edge firmware with a different scan address and ID registers must be updated before changing its ID. Use `DEVICE_STORE_PATH` to override the JSON path for isolated tests or another storage location.

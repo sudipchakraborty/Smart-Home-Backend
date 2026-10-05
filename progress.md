@@ -100,3 +100,28 @@
 - Root cause: backend `writeTime()` called an undefined `wait()` helper after the first register write.
 - Result: frontend schedule updates returned `RELAY_COMMUNICATION_FAILED` and stopped before writing all HH/MM/SS registers or trigger register `7/14`.
 - Added the missing delay helper; Edge project was not changed.
+## 2026-10-05 - Investigating frontend Modbus reads
+
+- Confirmed missing CORS permission for the running frontend on port 5174.
+- Plan: allow localhost and 127.0.0.1 on port 5174 in the local backend environment, restart, and verify response headers.
+- COM9 opens with ASCII, 115200, 8-N-1, slave 1; clock and relay-status reads time out. Compare working ModScan settings before changing serial configuration.
+- Supplied ModScan screenshots confirm slave ID 2; plan to change backend unitId to 2 and align the frontend connection label, then verify live reads.
+- Updated unitId to 2 and restarted backend. Live API status confirms ID 2; register verification is blocked by Opening COM9: Access denied while another application owns the port.
+
+## 2026-10-05 - Planned saved device inventory and selected-device control
+
+- Persist completed/stopped scan results in backend data/devices.json using atomic writes; merge by responding Modbus unitId so offline/unscanned devices remain saved.
+- Add GET /api/devices/saved and refresh inventory after verified identity edits.
+- Carry selected unitId on every control request. Add request-local targeting and serialize whole serial operations to prevent address/connection races.
+- Ensure address-changing identity writes follow the new register address before verifying and saving the renamed/moved device.
+- Tests: persistent reload/merge/empty scan/concurrent writes, request target isolation and serial sequencing, selected-address control HTTP tests, full backend tests and frontend build/lint.
+
+### Completed and verified
+
+- Added persistent atomic JSON inventory in data/devices.json, automatically merged after completed/stopped scans and updated after verified identity edits. Runtime JSON is excluded from Git.
+- Added GET /api/devices/saved, which returns cached device identities and the configured serial port without opening the Modbus connection.
+- Added request-local unitId targeting and whole-operation serial queueing for schedule, date/time, outputs, relay status/reset, scan, and identity operations. Legacy clients without unitId retain the configured default.
+- Identity updates now validate ID/name, follow each accepted address digit write on the register-backed Edge, verify at the new address, and replace the previous saved entry. Intermediate addresses avoid known saved devices.
+- Added persistence, concurrency, stopped-scan, targeting, address-change, and HTTP control integration tests. Updated older tests that assumed configured ID 1; this workspace is already configured for ID 2.
+- Final verification: all 35 backend tests passed; server syntax check passed; frontend lint/build and selected-address API checks passed; both repositories passed git diff --check.
+- Restarted backend to load this feature. Live GET saved inventory and frontend HTTP 200 verified. Read-only live scan of addresses 1..3 found no responding devices; real data/devices.json currently contains an empty list. No physical schedule/date/time/output/reset writes were performed. Browser interaction verification remains unavailable.

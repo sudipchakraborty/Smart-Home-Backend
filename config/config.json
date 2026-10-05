@@ -15,7 +15,7 @@
   },
   "modbus": {
     "protocol": "ascii",
-    "unitId": 1,
+    "unitId": 2,
     "timeoutMs": 2000
   },
   "relaySchedule": {

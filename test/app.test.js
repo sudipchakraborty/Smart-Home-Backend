@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 
 import { createApp } from '../src/app.js';
+import { appConfig } from '../src/config/app-config.js';
 
 let baseUrl;
 let server;
@@ -57,7 +58,7 @@ test('GET /api/modbus/status reports configured port without opening it', async 
   assert.equal(body.success, true);
   assert.equal(body.data.connected, false);
   assert.equal(body.data.path, 'COM9');
-  assert.equal(body.data.unitId, 1);
+  assert.equal(body.data.unitId, appConfig.modbus.unitId);
 });
 
 test('relay schedule route rejects an unknown relay before hardware access', async () => {

@@ -1,7 +1,7 @@
 import { parseDeviceDateTime } from '@smart-home/modbus';
 
 import { appConfig } from '../../config/app-config.js';
-import { modbusClient } from '../modbus/modbus.service.js';
+import { modbusClient, withModbusConnection } from '../modbus/modbus.service.js';
 
 const getRelayConfig = (relayNumber) => {
   const relay = appConfig.relaySchedule.registers[`relay${relayNumber}`];
@@ -9,16 +9,7 @@ const getRelayConfig = (relayNumber) => {
   return relay;
 };
 
-const withConnection = async (operation) => {
-  const wasConnected = modbusClient.isOpen;
-  if (!wasConnected) await modbusClient.connect();
-
-  try {
-    return await operation();
-  } finally {
-    if (!wasConnected) await modbusClient.disconnect();
-  }
-};
+const withConnection = withModbusConnection;
 
 const parseTime = (time) => {
   if (typeof time !== 'string' || !/^\d{2}:\d{2}:\d{2}$/.test(time)) throw new TypeError('Time must use HH:mm:ss format');

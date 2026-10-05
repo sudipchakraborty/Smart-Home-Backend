@@ -9,7 +9,7 @@ import { appConfig } from '../src/config/app-config.js';
 test('loads COM9 and Modbus settings from config.json', () => {
   assert.equal(appConfig.serialPort.path, 'COM9');
   assert.equal(appConfig.serialPort.baudRate, 115200);
-  assert.equal(appConfig.modbus.unitId, 1);
+  assert.ok(Number.isInteger(appConfig.modbus.unitId) && appConfig.modbus.unitId >= 1 && appConfig.modbus.unitId <= 247);
 });
 
 test('serial settings supply portable defaults', () => {
@@ -22,14 +22,14 @@ test('serial settings supply portable defaults', () => {
 });
 
 test('Modbus client exposes status without opening hardware', () => {
-  const client = new ModbusRtuClient(appConfig);
+  const client = new ModbusRtuClient({ ...appConfig, modbus: { ...appConfig.modbus, unitId: 7 } });
 
   assert.deepEqual(client.status, {
     connected: false,
     path: 'COM9',
     baudRate: 115200,
     protocol: 'ascii',
-    unitId: 1,
+    unitId: 7,
     timeoutMs: 2000,
   });
 });

@@ -7,8 +7,10 @@ import { relayScheduleRouter } from '../modules/relay-schedule/relay-schedule.ro
 import { outputAccessRouter } from '../modules/output-access/output-access.routes.js';
 import { deviceScanRouter } from '../modules/device-scan/device-scan.routes.js';
 import { deviceControlRouter } from '../modules/device-control/device-control.routes.js';
+import { targetDevice } from '../modules/modbus/modbus.service.js';
 
 export const apiRouter = Router();
+apiRouter.use(targetDevice);
 
 apiRouter.use('/health', healthRouter);
 apiRouter.use('/device-clock', deviceClockRouter);

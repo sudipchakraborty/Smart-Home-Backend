@@ -1,14 +1,10 @@
 import { AppError } from '../../core/errors/app-error.js';
 import { appConfig } from '../../config/app-config.js';
-import { modbusClient } from '../modbus/modbus.service.js';
+import { modbusClient, withModbusConnection } from '../modbus/modbus.service.js';
 import { createOutputAccessService } from './output-access.service.js';
 
 const service = createOutputAccessService(modbusClient, appConfig.outputAccess);
-const withConnection = async (operation) => {
-  const wasConnected = modbusClient.isOpen;
-  if (!wasConnected) await modbusClient.connect();
-  try { return await operation(); } finally { if (!wasConnected) await modbusClient.disconnect(); }
-};
+const withConnection = withModbusConnection;
 const handleError = (error) => {
   if (error instanceof TypeError || error instanceof RangeError) throw new AppError(error.message, { statusCode: 400, code: 'INVALID_OUTPUT_ACCESS' });
   throw new AppError(`Output communication failed: ${error.message}`, { statusCode: 503, code: 'OUTPUT_COMMUNICATION_FAILED' });

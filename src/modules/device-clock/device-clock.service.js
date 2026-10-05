@@ -1,20 +1,12 @@
 import { deviceDateTimeWriteSequence, registersToDeviceDateTime } from '@smart-home/modbus';
 
 import { appConfig } from '../../config/app-config.js';
-import { modbusClient } from '../modbus/modbus.service.js';
+import { modbusClient, withModbusConnection } from '../modbus/modbus.service.js';
 
 const wait = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
 const clockConfig = appConfig.deviceClock;
 
-const withConnection = async (operation) => {
-  const wasConnected = modbusClient.isOpen;
-  if (!wasConnected) await modbusClient.connect();
-  try {
-    return await operation();
-  } finally {
-    if (!wasConnected) await modbusClient.disconnect();
-  }
-};
+const withConnection = withModbusConnection;
 
 const readConnected = async () => {
   const response = await modbusClient.readHoldingRegisters(clockConfig.readStartRegister, clockConfig.registerCount);
